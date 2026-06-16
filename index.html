@@ -67,7 +67,7 @@ function buildSpec(mobile) {
     "transform": [
       {"calculate": "format(datum.amount, '.1f') + ' billion dollars'", "as": "amountLabel"},
       {
-        "calculate": "indexof(['Revenue','Cost of Revenue','Research and Development','Sales and Marketing','General and Administrative','Loss from Operations'], datum.category)",
+        "calculate": "indexof(['Revenue','Cost of Revenue','Research and Development','Sales and Marketing','General and Administrative'], datum.category)",
         "as": "categoryOrder"
       }
     ],
@@ -94,11 +94,10 @@ function buildSpec(mobile) {
                 "Research and Development",
                 "Sales and Marketing",
                 "General and Administrative",
-                "Loss from Operations"
               ],
               "range": [
                 "#000000",
-                "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"
+                "#E69F00", "#56B4E9", "#009E73", "#F0E442"//, "#D55E00"
                 // "#783714", "#f9b4a5", "#ffffff", "#296531", "#4d2815"
                 // "#d6d619", "#30e830", "#1ce5e5", "#ea3535", "#dd30dd"
               ]
