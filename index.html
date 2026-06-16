@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenAI Financials</title>
+  <title>OpenAI Financials for 2024 and 2025</title>
   <script src="/vega5.js"></script>
   <script src="/vega-lite.js"></script>
   <script src="/vega-embed.js"></script>
@@ -57,86 +57,104 @@
       {"year": 2025, "category": "Loss from Operations", "amount": -20.92}
     ];
 
-    function buildSpec(mobile) {
-      return {
-        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-        "title": "OpenAI Financials",
-        "width": "container",
-        "height": "container",
-        "data": {"values": DATA},
-        "transform": [{"calculate": "format(datum.amount, '.1f') + ' billion dollars'", "as": "amountLabel"}],
+function buildSpec(mobile) {
+  return {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "OpenAI Financials for 2024 and 2025",
+    "width": "container",
+    "height": "container",
+    "data": {"values": DATA},
+    "transform": [
+      {"calculate": "format(datum.amount, '.1f') + ' billion dollars'", "as": "amountLabel"},
+      {
+        "calculate": "indexof(['Revenue','Cost of Revenue','Research and Development','Sales and Marketing','General and Administrative','Loss from Operations'], datum.category)",
+        "as": "categoryOrder"
+      }
+    ],
+    "encoding": {
+      "x": {"field": "year", "title": "Year", "type": "ordinal", "axis": {"labelAngle": 0}}
+    },
+    "layer": [
+      {
+        "mark": {"type": "bar", "stroke": "black", "strokeWidth": 1},
         "encoding": {
-          "x": {"field": "year", "title": "Year", "type": "ordinal", "axis": {"labelAngle": 0}}
-        },
-        "layer": [
-          {
-            "mark": {"type": "bar", "stroke": "black", "strokeWidth": 1},
-            "encoding": {
-              "y": {
-                "field": "amount",
-                "title": mobile ? "Billion $" : "Profit/Loss (Billion Dollars)",
-                "type": "quantitative"
-              },
-              "color": {
-                "field": "category",
-                "title": "Category",
-                "type": "nominal",
-                "scale": {
-                  "domain": ["Revenue","Cost of Revenue","Research and Development","Sales and Marketing","General and Administrative","Loss from Operations"],
-                  "range": ["#006400","#f52707","#f53f07","#f56a07","#f5a207","#f5d507"]
-                }
-              },
-              "tooltip": [
-                {"field": "year", "title": "Year"},
-                {"field": "category", "title": "Category"},
-                {"field": "amountLabel", "title": "Amount"}
+          "y": {
+            "field": "amount",
+            "title": mobile ? "Billion $" : "Revenue/Expenses (Billion Dollars)",
+            "type": "quantitative"
+          },
+          "color": {
+            "field": "category",
+            "title": "Category",
+            "type": "nominal",
+            "scale": {
+              "domain": [
+                "Revenue",
+                "Cost of Revenue",
+                "Research and Development",
+                "Sales and Marketing",
+                "General and Administrative",
+                "Loss from Operations"
+              ],
+              "range": [
+                "#000000",
+                "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#D55E00"
+                // "#783714", "#f9b4a5", "#ffffff", "#296531", "#4d2815"
+                // "#d6d619", "#30e830", "#1ce5e5", "#ea3535", "#dd30dd"
               ]
             }
           },
-          {
-            "data": {"values": [{"year": 2024, "topY": 3.7, "label": ""}, {"year": 2025, "topY": 13.07, "label": ""}]},
-            "mark": {"type": "text", "align": "center", "baseline": "bottom", "dy": -8, "fontSize": 18, "fontWeight": "bold", "color": "black"},
-            "encoding": {
-              "x": {"field": "year", "type": "ordinal"},
-              "y": {"field": "topY", "type": "quantitative"},
-              "text": {"field": "label"}
-            }
-          },
-          {
-            "data": {"values": [{"year": 2025, "y": -58, "label": "Source: wheresyoured.at", "url": "https://www.wheresyoured.at/exclusive-openai-financials/"}]},
-            "mark": {"type": "text", "align": "right", "baseline": "top", "fontSize": 11, "color": "#1a73e8", "fontStyle": "italic", "dy": 6},
-            "encoding": {
-              "x": {"field": "year", "type": "ordinal"},
-              "y": {"field": "y", "type": "quantitative"},
-              "text": {"field": "label"},
-              "href": {"field": "url"},
-              "tooltip": {"field": "url", "title": "Open source"}
-            }
-          }
-        ],
-        "autosize": {"type": "fit-x", "contains": "padding", "resize": true},
-        "config": {
-          "font": "Comic Sans MS",
-          "title": {"font": "Comic Sans MS", "fontSize": mobile ? 16 : 24},
-          "axis": {
-            "labelFont": "Comic Sans MS", "labelFontSize": mobile ? 11 : 16,
-            "titleFont": "Comic Sans MS", "titleFontSize": mobile ? 12 : 18
-          },
-          "legend": {
-            "labelFont": "Comic Sans MS", "labelFontSize": mobile ? 10 : 12,
-            "titleFont": "Comic Sans MS", "titleFontSize": mobile ? 12 : 18,
-            "symbolSize": mobile ? 100 : 200,
-            "orient": mobile ? "bottom" : "right",
-            "columns": mobile ? 1 : undefined
-          },
-          "header": {
-            "labelFont": "Comic Sans MS", "labelFontSize": mobile ? 11 : 16,
-            "titleFont": "Comic Sans MS", "titleFontSize": mobile ? 12 : 18
-          }
+          "order": {"field": "categoryOrder", "type": "ordinal"},
+          "tooltip": [
+            {"field": "year", "title": "Year"},
+            {"field": "category", "title": "Category"},
+            {"field": "amountLabel", "title": "Amount"}
+          ]
         }
-      };
+      },
+      {
+        "data": {"values": [{"year": 2024, "topY": 3.7, "label": ""}, {"year": 2025, "topY": 13.07, "label": ""}]},
+        "mark": {"type": "text", "align": "center", "baseline": "bottom", "dy": -8, "fontSize": 18, "fontWeight": "bold", "color": "black"},
+        "encoding": {
+          "x": {"field": "year", "type": "ordinal"},
+          "y": {"field": "topY", "type": "quantitative"},
+          "text": {"field": "label"}
+        }
+      },
+      {
+        "data": {"values": [{"year": 2025, "y": -58, "label": "Source: wheresyoured.at", "url": "https://www.wheresyoured.at/exclusive-openai-financials/"}]},
+        "mark": {"type": "text", "align": "right", "baseline": "top", "fontSize": 11, "color": "#1a73e8", "fontStyle": "italic", "dy": 6},
+        "encoding": {
+          "x": {"field": "year", "type": "ordinal"},
+          "y": {"field": "y", "type": "quantitative"},
+          "text": {"field": "label"},
+          "href": {"field": "url"},
+          "tooltip": {"field": "url", "title": "Open source"}
+        }
+      }
+    ],
+    "autosize": {"type": "fit-x", "contains": "padding", "resize": true},
+    "config": {
+      "font": "Comic Sans MS",
+      "title": {"font": "Comic Sans MS", "fontSize": mobile ? 16 : 24},
+      "axis": {
+        "labelFont": "Comic Sans MS", "labelFontSize": mobile ? 11 : 16,
+        "titleFont": "Comic Sans MS", "titleFontSize": mobile ? 12 : 18
+      },
+      "legend": {
+        "labelFont": "Comic Sans MS", "labelFontSize": mobile ? 10 : 12,
+        "titleFont": "Comic Sans MS", "titleFontSize": mobile ? 12 : 18,
+        "symbolSize": mobile ? 100 : 200,
+        "orient": mobile ? "bottom" : "right",
+        "columns": mobile ? 1 : undefined
+      },
+      "header": {
+        "labelFont": "Comic Sans MS", "labelFontSize": mobile ? 11 : 16,
+        "titleFont": "Comic Sans MS", "titleFontSize": mobile ? 12 : 18
+      }
     }
-
+  };
+}
     const mq = window.matchMedia('(max-width: 600px)');
     vegaEmbed('#chart', buildSpec(mq.matches), {actions: false});
     mq.addEventListener('change', (e) => vegaEmbed('#chart', buildSpec(e.matches), {actions: false}));
